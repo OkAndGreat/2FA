@@ -71,4 +71,8 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-insets:0.16.1")
     implementation("com.google.accompanist:accompanist-insets-ui:0.16.1")
+
+    implementation("androidx.navigation:navigation-compose:2.7.0")
+
+    implementation ("com.google.accompanist:accompanist-pager:0.18.0")
 }

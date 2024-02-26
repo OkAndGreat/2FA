@@ -4,8 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +17,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -21,10 +27,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.twofa.ui.theme.TwoFATheme
+import com.example.twofa.utils.StatusBarHeight
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import widget.BottomNavigation
+import widget.NavItem
+import widget.navItemList
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +62,7 @@ class MainActivity : ComponentActivity() {
                 // 确保内容占据刘海区域等
                 WindowCompat.setDecorFitsSystemWindows(window, false)
 
-                //Window Insets）是异步传递给视图的,需要确保ProvideWindowInsets放在视图根布局
+                //Window Insets是异步传递给视图的,需要确保ProvideWindowInsets放在视图根布局
                 ProvideWindowInsets {
                     // A surface container using the 'background' color from the theme
                     Surface(
@@ -60,7 +72,7 @@ class MainActivity : ComponentActivity() {
                                 top = StatusBarHeight()
                             ), color = MaterialTheme.colorScheme.background
                     ) {
-                        Greeting("Android")
+                        MainApp()
                     }
                 }
             }
@@ -69,24 +81,32 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun StatusBarHeight(): Dp {
-    // 获取WindowInsets
-    val insets = LocalWindowInsets.current.statusBars
-    // 将像素转换为DP
-    return with(LocalDensity.current) { insets.top.toDp() }
-}
+fun MainApp() {
+    val globalViewModel: GlobalViewModel? = GlobalViewModel.get(LocalContext.current)
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!", modifier = modifier
-    )
-}
+    val navController = rememberNavController()
+    globalViewModel?.navController = navController
+    val currentBackStack by navController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStack?.destination
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TwoFATheme {
-        Greeting("Android")
+    val currentSelectIndex =
+        navItemList.findFirstMatchIndex(currentDestination?.route ?: "")
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        NavigationHost(navHostController = navController)
+        BottomNavigation(
+            selectedIndex = currentSelectIndex,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .height(76.dp),
+            onItemClicked = {
+                navController.navigateSingleTopTo(navItemList[it].route)
+            }
+        )
     }
+}
+
+fun <T : NavItem> List<T>.findFirstMatchIndex(route: String): Int {
+    this.forEachIndexed { index, t -> if (t.route == route) return index }
+    return 0
 }
