@@ -25,4 +25,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "TwoFA"
 include(":app")
-include(":mylibrary")

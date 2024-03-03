@@ -6,6 +6,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.twofa.ui.setting.SettingScreen
+import com.example.twofa.ui.token.TokenScreen
 import widget.NavItem
 
 @Composable
@@ -13,16 +15,17 @@ fun NavigationHost(
     navHostController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+
     NavHost(
         navController = navHostController,
         startDestination = NavItem.TokenNavItem.route,
         modifier
     ) {
         composable(route = NavItem.TokenNavItem.route){
-
+            TokenScreen()
         }
         composable(route = NavItem.SettingNavItem.route){
-
+            SettingScreen()
         }
     }
 }

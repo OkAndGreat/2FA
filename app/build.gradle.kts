@@ -75,4 +75,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.0")
 
     implementation ("com.google.accompanist:accompanist-pager:0.18.0")
+
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
 }

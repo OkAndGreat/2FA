@@ -1,7 +1,9 @@
 package widget
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -52,7 +54,10 @@ fun BottomNavigation(
         ) {
 
             val iconSelectBgAnim =
-                animateIntAsState(targetValue = if (selectedIndex == 0) 255 else 0, label = "")
+                animateIntAsState(
+                    targetValue = if (selectedIndex == 0) 255 else 0, label = "",
+                    animationSpec = tween(durationMillis = 500, easing = LinearOutSlowInEasing)
+                )
             val iconSelectBgColor = Color(248, 226, 228, iconSelectBgAnim.value)
 
             val image: Painter = painterResource(id = R.drawable.navigation_home)
@@ -91,7 +96,11 @@ fun BottomNavigation(
             val image: Painter = painterResource(id = R.drawable.navigation_setting)
 
             val iconSelectBgAnim =
-                animateIntAsState(targetValue = if (selectedIndex == 1) 255 else 0, label = "")
+                animateIntAsState(
+                    targetValue = if (selectedIndex == 1) 255 else 0,
+                    label = "",
+                    animationSpec = tween(durationMillis = 500, easing = LinearOutSlowInEasing)
+                )
             val iconSelectBgColor = Color(248, 226, 228, iconSelectBgAnim.value)
 
             Icon(
