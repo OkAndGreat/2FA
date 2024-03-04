@@ -1,5 +1,6 @@
 package com.example.twofa
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,10 +32,13 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.twofa.ui.theme.TwoFATheme
+import com.example.twofa.utils.Constant
 import com.example.twofa.utils.StatusBarHeight
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.king.camera.scan.CameraScan
+import org.greenrobot.eventbus.EventBus
 import widget.BottomNavigation
 import widget.NavItem
 import widget.navItemList
@@ -79,6 +83,30 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && data != null) {
+            when (requestCode) {
+                0x01 -> {
+                    val result = CameraScan.parseScanResult(data)
+                    result?.let {
+                        EventBus.getDefault().post(ParseQRCodeEvent(it))
+                    }
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -112,3 +140,5 @@ fun <T : NavItem> List<T>.findFirstMatchIndex(route: String): Int {
     this.forEachIndexed { index, t -> if (t.route == route) return index }
     return 0
 }
+
+class ParseQRCodeEvent(val msg: String)

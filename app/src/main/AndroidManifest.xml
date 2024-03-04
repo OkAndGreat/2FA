@@ -13,6 +13,10 @@
         android:theme="@style/Theme.TwoFA"
         tools:targetApi="31">
         <activity
+            android:name=".ui.token.QRCodeScanActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TwoFA" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
