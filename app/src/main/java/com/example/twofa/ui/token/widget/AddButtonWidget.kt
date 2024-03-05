@@ -15,12 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.twofa.utils.clickableWithoutRipple
 
 @Composable
 fun AddButton(modifier: Modifier = Modifier, onItemClicked: (() -> Unit)) {
     Box(
         modifier
-            .clickable {
+            .clickableWithoutRipple {
                 onItemClicked.invoke()
             }
             .clip(RoundedCornerShape(10.dp))

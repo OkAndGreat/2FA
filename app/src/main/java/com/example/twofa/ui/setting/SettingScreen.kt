@@ -1,6 +1,8 @@
 package com.example.twofa.ui.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +15,7 @@ import com.example.twofa.R
 
 @Composable
 fun SettingScreen() {
-    Column {
+    Column(modifier = Modifier.background(Color.White).fillMaxSize()) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "Setting",
@@ -30,7 +32,11 @@ fun SettingScreen() {
             SettingRow(modifier = Modifier, iconId = R.drawable.ic_theme_48, desc = "行为与外观") {
 
             }
-            SettingRow(modifier = Modifier, iconId = R.drawable.ic_import_outport, desc = "导入与导出") {
+            SettingRow(
+                modifier = Modifier,
+                iconId = R.drawable.ic_import_outport,
+                desc = "导入与导出"
+            ) {
 
             }
             SettingRow(modifier = Modifier, iconId = R.drawable.ic_trash_48, desc = "回收站") {

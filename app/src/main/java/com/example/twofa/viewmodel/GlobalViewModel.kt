@@ -1,4 +1,4 @@
-package com.example.twofa
+package com.example.twofa.viewmodel
 
 import android.content.Context
 import androidx.activity.ComponentActivity

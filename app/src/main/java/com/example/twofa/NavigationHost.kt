@@ -19,7 +19,7 @@ fun NavigationHost(
     NavHost(
         navController = navHostController,
         startDestination = NavItem.TokenNavItem.route,
-        modifier
+        modifier = modifier
     ) {
         composable(route = NavItem.TokenNavItem.route){
             TokenScreen()

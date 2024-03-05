@@ -2,6 +2,11 @@ package com.example.twofa.ui.token
 
 import android.app.Activity
 import android.content.Intent
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,28 +17,84 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.twofa.ParseQRCodeEvent
 import com.example.twofa.R
+import com.example.twofa.ui.token.search.SearchBar
+import com.example.twofa.ui.token.search.SearchDisplay
+import com.example.twofa.ui.token.search.rememberSearchState
 import com.example.twofa.ui.token.widget.AddButton
 import com.example.twofa.utils.Constant.REQUEST_CODE_SCAN
 import com.example.twofa.utils.LogUtil
+import com.example.twofa.viewmodel.TokenViewModel
 import com.king.camera.scan.util.LogUtils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TokenScreen() {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxSize()
     ) {
         val context = LocalContext.current
+        val tokenViewModel: TokenViewModel = viewModel()
+        val parseQRCodeEventState =
+            tokenViewModel.parseQRCodeEventFlow.collectAsState(initial = null)
+
+        val searchState = rememberSearchState(
+            tokenViewModel.tokenList,
+            timeoutMillis = 1000
+        ) { query: TextFieldValue ->
+            tokenViewModel.getTokenListByQuery(query.text)
+        }
+        val focusManager = LocalFocusManager.current
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        val dispatcher: OnBackPressedDispatcher =
+            LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
+        val backCallback = remember {
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (!searchState.focused) {
+                        isEnabled = false
+                        Toast.makeText(context, "后退", Toast.LENGTH_SHORT).show()
+                        dispatcher.onBackPressed()
+                    } else {
+                        searchState.query = TextFieldValue("")
+                        searchState.focused = false
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    }
+                }
+
+            }
+        }
+        DisposableEffect(dispatcher) { // dispose/relaunch if dispatcher changes
+            dispatcher.addCallback(backCallback)
+            onDispose {
+                backCallback.remove() // avoid leaks!
+            }
+        }
+
+
         //上部区域，包括搜索框和添加按钮
         Box(
             modifier = Modifier
@@ -41,6 +102,18 @@ fun TokenScreen() {
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
+
+            SearchBar(
+                query = searchState.query,
+                onQueryChange = { searchState.query = it },
+                onSearchFocusChange = { searchState.focused = it },
+                onClearQuery = { searchState.query = TextFieldValue("") },
+                onBack = { searchState.query = TextFieldValue("") },
+                searching = searchState.searching,
+                focused = searchState.focused,
+                modifier = Modifier.padding(end = 20.dp)
+            )
+
             AddButton(
                 Modifier
                     .padding(top = 8.dp)
@@ -61,13 +134,22 @@ fun TokenScreen() {
                 )
             }
         }
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onParseQRCodeEvent(event: ParseQRCodeEvent) {
-        LogUtil.d(event.msg)
-    }
+        //下部区域，根据state.searchDisplay会变化
+        when (searchState.searchDisplay) {
+            SearchDisplay.InitialResults,
+            SearchDisplay.Suggestions,
+            SearchDisplay.SearchInProgress,
+            SearchDisplay.Results -> {
 
+            }
+
+            SearchDisplay.NoResults -> {
+
+
+            }
+        }
+    }
 }
 
 
