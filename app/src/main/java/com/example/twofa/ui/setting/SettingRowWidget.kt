@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.twofa.R
+import com.example.twofa.utils.clickableWithoutRipple
 
 @Composable
 fun SettingRow(
@@ -26,7 +27,7 @@ fun SettingRow(
 ) {
     ConstraintLayout(
         modifier = modifier
-            .clickable {
+            .clickableWithoutRipple {
                 onItemClicked.invoke()
             }
             .padding(horizontal = 20.dp)

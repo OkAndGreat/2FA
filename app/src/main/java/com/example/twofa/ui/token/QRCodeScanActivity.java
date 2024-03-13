@@ -2,6 +2,8 @@ package com.example.twofa.ui.token;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.example.twofa.R;
 import com.google.zxing.Result;
@@ -16,8 +18,12 @@ import com.king.zxing.analyze.QRCodeAnalyzer;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
+import kotlinx.coroutines.GlobalScope;
+
 /**
  * 扫二维码识别示例
+ *
  * @author <a href="mailto:jenly1314@gmail.com">Jenly</a>
  */
 public class QRCodeScanActivity extends BarcodeCameraScanActivity {
@@ -27,6 +33,14 @@ public class QRCodeScanActivity extends BarcodeCameraScanActivity {
         super.initCameraScan(cameraScan);
         // 根据需要设置CameraScan相关配置
         cameraScan.setPlayBeep(true);
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            // 测试返回结果
+            Intent intent = new Intent();
+            intent.putExtra(CameraScan.SCAN_RESULT, "otpauth://totp/GitHub:OkAndGreat?secret=LTIX6KG74TYFMTNK&issuer=GitHub");
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        }, 3000);
     }
 
     @Nullable

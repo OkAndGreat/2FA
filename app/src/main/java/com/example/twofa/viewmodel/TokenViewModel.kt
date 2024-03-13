@@ -1,16 +1,23 @@
 package com.example.twofa.viewmodel
 
 import android.content.Context
-import android.media.session.MediaSession.Token
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.twofa.ParseQRCodeEvent
+import com.example.twofa.db.AppDatabase
+import com.example.twofa.db.Token
 import com.example.twofa.ui.token.model.TokenModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import com.example.twofa.utils.TOTPParseUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TokenViewModel : ViewModel() {
 
@@ -24,16 +31,16 @@ class TokenViewModel : ViewModel() {
 
     }
 
-    private val _parseQRCodeEventFlow = MutableSharedFlow<ParseQRCodeEvent>()
-    val parseQRCodeEventFlow: SharedFlow<ParseQRCodeEvent> = _parseQRCodeEventFlow
+    private val _tokenList =
+        MutableStateFlow(emptyList<Token>().toMutableList())
 
-    val tokenList = mutableListOf<TokenModel>()
+    val tokenList: StateFlow<List<Token>> = _tokenList
 
-    fun getTokenListByQuery(query: String): List<TokenModel> {
+    fun getTokenListByQuery(query: String): List<Token> {
 
-        var filteredList = linkedSetOf<TokenModel>()
+        var filteredList = linkedSetOf<Token>()
 
-        tokenList.forEach {
+        _tokenList.value.forEach {
             if (it.userName.contains(query, ignoreCase = true)) {
                 filteredList.add(it)
             }
@@ -43,7 +50,25 @@ class TokenViewModel : ViewModel() {
 
     fun emitQRCodeScanEvent(event: ParseQRCodeEvent) {
         viewModelScope.launch {
-            _parseQRCodeEventFlow.emit(event)
+            val totpAuthData = TOTPParseUtil.parseTOTPAuthUrl(event.msg) ?: return@launch
+            val db = AppDatabase.getDatabase()
+            val tokenDao = db.tokenDao()
+            val token = Token(
+                0,
+                totpAuthData.platformName,
+                totpAuthData.userName,
+                totpAuthData.secretKey
+            )
+            // 创建新的列表，添加新元素
+            val newList = _tokenList.value.toMutableList().apply {
+                add(token)
+            }
+            // 更新MutableStateFlow的值
+            _tokenList.value = newList
+
+            withContext(Dispatchers.IO) {
+                tokenDao.insert(token)
+            }
         }
     }
 

@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -39,6 +40,8 @@ import com.example.twofa.ui.token.search.SearchBar
 import com.example.twofa.ui.token.search.SearchDisplay
 import com.example.twofa.ui.token.search.rememberSearchState
 import com.example.twofa.ui.token.widget.AddButton
+import com.example.twofa.ui.token.widget.NoResultWidget
+import com.example.twofa.ui.token.widget.TokenFeedWidget
 import com.example.twofa.utils.Constant.REQUEST_CODE_SCAN
 import com.example.twofa.utils.LogUtil
 import com.example.twofa.viewmodel.TokenViewModel
@@ -55,12 +58,11 @@ fun TokenScreen() {
             .fillMaxSize()
     ) {
         val context = LocalContext.current
-        val tokenViewModel: TokenViewModel = viewModel()
-        val parseQRCodeEventState =
-            tokenViewModel.parseQRCodeEventFlow.collectAsState(initial = null)
+        val tokenViewModel: TokenViewModel = TokenViewModel.get(context) ?: return
 
+        val tokenList by tokenViewModel.tokenList.collectAsState()
         val searchState = rememberSearchState(
-            tokenViewModel.tokenList,
+            tokenList,
             timeoutMillis = 1000
         ) { query: TextFieldValue ->
             tokenViewModel.getTokenListByQuery(query.text)
@@ -141,12 +143,11 @@ fun TokenScreen() {
             SearchDisplay.Suggestions,
             SearchDisplay.SearchInProgress,
             SearchDisplay.Results -> {
-
+                TokenFeedWidget(tokenFeedList = tokenList)
             }
 
             SearchDisplay.NoResults -> {
-
-
+                NoResultWidget()
             }
         }
     }

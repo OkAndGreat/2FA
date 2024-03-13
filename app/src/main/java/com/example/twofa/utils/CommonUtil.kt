@@ -25,3 +25,4 @@ fun Modifier.clickableWithoutRipple(onClick: () -> Unit): Modifier = composed {
         }) { onClick.invoke() }
     )
 }
+
