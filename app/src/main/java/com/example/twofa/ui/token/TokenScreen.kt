@@ -54,6 +54,7 @@ import org.greenrobot.eventbus.ThreadMode
 fun TokenScreen() {
     Column(
         modifier = Modifier
+            .padding(bottom = 90.dp)
             .background(Color.White)
             .fillMaxSize()
     ) {

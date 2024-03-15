@@ -77,6 +77,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val tokenViewModel = TokenViewModel.get(this)
+        tokenViewModel?.getTokenListByDb()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val tokenViewModel = TokenViewModel.get(this)
@@ -111,7 +117,7 @@ fun MainApp() {
         BottomNavigation(
             selectedIndex = currentSelectIndex,
             modifier = Modifier
-                .padding(bottom = 25.dp)
+                .padding(bottom = 22.dp)
                 .align(Alignment.BottomCenter)
                 .height(76.dp),
             onItemClicked = {

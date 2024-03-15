@@ -1,12 +1,17 @@
 package com.example.twofa.ui.token.widget
 
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -14,6 +19,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.totp.Authenicator
+import com.example.twofa.utils.LogUtil
+import com.example.twofa.utils.clickableWithoutRipple
 import widget.AnimatedCircleProgress
 
 @Composable
@@ -22,13 +30,22 @@ fun TokenFeedItem(
     onItemClicked: (() -> Unit),
     platformName: String,
     userName: String,
-    token: String,
+    secret: String,
     progress: Int,
     maxProgress: Int
 ) {
+    LogUtil.d(progress.toString())
+
+    var token by remember {
+        mutableStateOf(Authenicator.getCurrentCode(secret))
+    }
+    if(progress == 0) {
+        token = Authenicator.getCurrentCode(secret)
+    }
+
     ConstraintLayout(
         modifier
-            .clickable {
+            .clickableWithoutRipple {
                 onItemClicked.invoke()
             }
             .padding(vertical = 10.dp)
@@ -78,6 +95,16 @@ fun TokenFeedItem(
             maxProgress = maxProgress,
             circleColor = Color.Black
         )
+
+        val (dividerRef) = createRefs()
+        Divider(
+            modifier
+                .padding(horizontal = 18.dp)
+                .constrainAs(dividerRef) {
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(parent.end)
+                })
     }
 }
 
@@ -89,7 +116,7 @@ fun TokenFeedItemPreview() {
         onItemClicked = { /*TODO*/ },
         platformName = "Github",
         userName = "OkAndGreat",
-        token = "372848",
+        secret = "372848",
         progress = 26,
         maxProgress = 30
     )

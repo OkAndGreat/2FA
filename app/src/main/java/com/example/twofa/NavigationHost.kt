@@ -21,10 +21,13 @@ fun NavigationHost(
         startDestination = NavItem.TokenNavItem.route,
         modifier = modifier
     ) {
-        composable(route = NavItem.TokenNavItem.route){
+        composable(route = NavItem.TokenNavItem.route) {
             TokenScreen()
         }
-        composable(route = NavItem.SettingNavItem.route){
+        composable(route = NavItem.SettingNavItem.route) {
+            SettingScreen()
+        }
+        composable(route = NavItem.SecureNavItem.route) {
             SettingScreen()
         }
     }

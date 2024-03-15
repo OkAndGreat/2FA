@@ -1,6 +1,5 @@
 package com.example.twofa.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -14,7 +13,7 @@ interface TokenDao {
     fun insert(token: Token)
 
     @Query("SELECT * FROM token_table")
-    fun getAllTokens(): LiveData<List<Token>>
+    fun getAllTokens(): List<Token>
 
     @Delete
     fun deleteToken(token: Token)

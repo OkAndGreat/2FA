@@ -144,4 +144,6 @@ sealed class NavItem(val route: String = "") {
 
     object SettingNavItem : NavItem("setting")
 
+    object SecureNavItem : NavItem("secure")
+
 }

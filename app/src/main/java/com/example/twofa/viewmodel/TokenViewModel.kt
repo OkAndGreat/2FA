@@ -2,16 +2,12 @@ package com.example.twofa.viewmodel
 
 import android.content.Context
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.twofa.ParseQRCodeEvent
 import com.example.twofa.db.AppDatabase
 import com.example.twofa.db.Token
-import com.example.twofa.ui.token.model.TokenModel
 import com.example.twofa.utils.TOTPParseUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,11 +37,27 @@ class TokenViewModel : ViewModel() {
         var filteredList = linkedSetOf<Token>()
 
         _tokenList.value.forEach {
-            if (it.userName.contains(query, ignoreCase = true)) {
+            if (it.userName.contains(query, ignoreCase = true) || it.platformName.contains(
+                    query,
+                    ignoreCase = true
+                )
+            ) {
                 filteredList.add(it)
             }
+
         }
         return filteredList.toList()
+    }
+
+    fun getTokenListByDb() {
+        viewModelScope.launch {
+            val db = AppDatabase.getDatabase()
+            val tokenDao = db.tokenDao()
+            withContext(Dispatchers.IO) {
+                val newList = tokenDao.getAllTokens().toMutableList()
+                _tokenList.value = newList
+            }
+        }
     }
 
     fun emitQRCodeScanEvent(event: ParseQRCodeEvent) {
