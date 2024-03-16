@@ -114,16 +114,17 @@ fun MainApp() {
 
     Box(modifier = Modifier.fillMaxSize()) {
         NavigationHost(navHostController = navController, modifier = Modifier)
-        BottomNavigation(
-            selectedIndex = currentSelectIndex,
-            modifier = Modifier
-                .padding(bottom = 22.dp)
-                .align(Alignment.BottomCenter)
-                .height(76.dp),
-            onItemClicked = {
-                navController.navigateSingleTopTo(navItemList[it].route)
-            }
-        )
+        if (currentDestination?.route == NavItem.SettingNavItem.route || currentDestination?.route == NavItem.TokenNavItem.route)
+            BottomNavigation(
+                selectedIndex = currentSelectIndex,
+                modifier = Modifier
+                    .padding(bottom = 22.dp)
+                    .align(Alignment.BottomCenter)
+                    .height(76.dp),
+                onItemClicked = {
+                    navController.navigateSingleTopTo(navItemList[it].route)
+                }
+            )
     }
 }
 

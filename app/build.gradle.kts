@@ -101,4 +101,6 @@ dependencies {
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
 
+    implementation("com.tencent:mmkv:1.3.3")
+
 }
