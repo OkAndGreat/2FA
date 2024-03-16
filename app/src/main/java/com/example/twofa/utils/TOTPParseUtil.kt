@@ -10,7 +10,6 @@ data class TOTPAuthData(
 )
 
 object TOTPParseUtil {
-
     fun parseTOTPAuthUrl(totpAuthUrl: String): TOTPAuthData? {
         try {
             val uri = URI(totpAuthUrl)

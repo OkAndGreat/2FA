@@ -1,6 +1,7 @@
 package com.example.twofa.ui.token.widget
 
-import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,36 +21,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.totp.Authenicator
+import com.example.twofa.db.Token
+import com.example.twofa.db.emptyToken
+import com.example.twofa.utils.Constant
 import com.example.twofa.utils.LogUtil
-import com.example.twofa.utils.clickableWithoutRipple
 import widget.AnimatedCircleProgress
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TokenFeedItem(
     modifier: Modifier,
-    onItemClicked: (() -> Unit),
-    platformName: String,
-    userName: String,
-    secret: String,
+    onItemClicked: ((token: Token) -> Unit),
+    onItemLongClicked: ((secret: String) -> Unit),
+    tokenMixed: Token,
     progress: Int,
     maxProgress: Int
 ) {
     LogUtil.d(progress.toString())
 
     var token by remember {
-        mutableStateOf(Authenicator.getCurrentCode(secret))
+        mutableStateOf(Authenicator.getCurrentCode(tokenMixed.secretKey))
     }
-    if(progress == 0) {
-        token = Authenicator.getCurrentCode(secret)
+    if (progress == 0) {
+        token = Authenicator.getCurrentCode(tokenMixed.secretKey)
     }
 
     ConstraintLayout(
         modifier
-            .clickableWithoutRipple {
-                onItemClicked.invoke()
-            }
-            .padding(vertical = 10.dp)
-            .fillMaxWidth()) {
+            .combinedClickable(onClick = {
+                onItemClicked.invoke(tokenMixed)
+            }, onLongClick = {
+                onItemLongClicked.invoke(token)
+            })
+            .padding(top = 12.dp)
+            .fillMaxWidth()
+    ) {
         val (iconRef, infoRef, timerRef) = createRefs()
 
         TextWithCircleBorder(text = "Github", modifier = Modifier
@@ -66,10 +72,10 @@ fun TokenFeedItem(
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
             }
-            .padding(start = 15.dp)) {
-            Text(text = platformName, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+            .padding(start = 15.dp, bottom = 10.dp)) {
+            Text(text = tokenMixed.platformName, fontSize = 15.sp, fontWeight = FontWeight.Bold)
             Text(
-                text = userName,
+                text = tokenMixed.userName,
                 fontSize = 14.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(top = 1.dp)
@@ -78,7 +84,8 @@ fun TokenFeedItem(
                 text = token.substring(0, 3) + " " + token.substring(3, 6),
                 modifier = Modifier.padding(top = 3.dp),
                 fontSize = 36.sp,
-                fontWeight = FontWeight.ExtraLight
+                fontWeight = FontWeight.ExtraLight,
+                color = if (progress >= 25) Constant.COMMON_RED_COLOR_DEEP else Color.Unspecified
             )
         }
 
@@ -93,16 +100,15 @@ fun TokenFeedItem(
                 .size(40.dp),
             curProgress = progress,
             maxProgress = maxProgress,
-            circleColor = Color.Black
+            circleColor = if (progress >= 25) Constant.COMMON_RED_COLOR_DEEP else Color.Black
         )
 
         val (dividerRef) = createRefs()
         Divider(
             modifier
-                .padding(horizontal = 18.dp)
                 .constrainAs(dividerRef) {
                     start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
+                    top.linkTo(infoRef.bottom)
                     end.linkTo(parent.end)
                 })
     }
@@ -114,9 +120,8 @@ fun TokenFeedItemPreview() {
     TokenFeedItem(
         modifier = Modifier,
         onItemClicked = { /*TODO*/ },
-        platformName = "Github",
-        userName = "OkAndGreat",
-        secret = "372848",
+        onItemLongClicked = {},
+        tokenMixed = emptyToken,
         progress = 26,
         maxProgress = 30
     )

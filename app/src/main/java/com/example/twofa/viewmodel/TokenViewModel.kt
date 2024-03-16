@@ -49,6 +49,33 @@ class TokenViewModel : ViewModel() {
         return filteredList.toList()
     }
 
+    fun updateToken(token: Token, index: Int) {
+        _tokenList.value = _tokenList.value.toMutableList().apply {
+            this[index] = token
+        }
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val db = AppDatabase.getDatabase()
+                val tokenDao = db.tokenDao()
+                tokenDao.updateToken(token)
+            }
+        }
+    }
+
+    fun deleteToken(token: Token) {
+        _tokenList.value = _tokenList.value.toMutableList().apply {
+            this.remove(token)
+        }
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val db = AppDatabase.getDatabase()
+                val tokenDao = db.tokenDao()
+                tokenDao.deleteToken(token = token)
+            }
+        }
+    }
+
+
     fun getTokenListByDb() {
         viewModelScope.launch {
             val db = AppDatabase.getDatabase()

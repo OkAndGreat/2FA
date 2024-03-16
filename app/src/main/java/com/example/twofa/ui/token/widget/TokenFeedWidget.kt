@@ -1,5 +1,6 @@
 package com.example.twofa.ui.token.widget
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -11,7 +12,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.example.twofa.db.Token
+import com.example.twofa.db.emptyToken
+import com.example.twofa.ui.token.EditTokenDialog
+import com.example.twofa.utils.CommonUtil
+import com.example.twofa.viewmodel.TokenViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -23,7 +29,16 @@ fun TokenFeedWidget(modifier: Modifier = Modifier, tokenFeedList: List<Token>) {
     var currentProgress by remember {
         mutableStateOf(0)
     }
+    var showDialog by remember { mutableStateOf(false) }
+    var curSelectedIndex by remember {
+        mutableStateOf(0)
+    }
+    var dialogToken by remember {
+        mutableStateOf(emptyToken.copy())
+    }
     val listState = rememberLazyListState()
+    val context = LocalContext.current
+    val tokenViewModel = TokenViewModel.get(context)
 
     LaunchedEffect(Unit) {
 
@@ -44,16 +59,37 @@ fun TokenFeedWidget(modifier: Modifier = Modifier, tokenFeedList: List<Token>) {
         }
     }
 
+    if (showDialog) {
+        EditTokenDialog(
+            onDismiss = { showDialog = showDialog.not() },
+            onNegativeClick = { showDialog = showDialog.not() },
+            onPositiveClick = { token, index ->
+                showDialog = showDialog.not()
+                tokenViewModel?.updateToken(token = token, index)
+            },
+            onDeleteClicked = {
+                showDialog = showDialog.not()
+                tokenViewModel?.deleteToken(token = it)
+            },
+            token = dialogToken,
+            index = curSelectedIndex
+        )
+    }
+
     LazyColumn(modifier.fillMaxWidth(), state = listState) {
-        itemsIndexed(tokenFeedList) { _, item ->
+        itemsIndexed(tokenFeedList) { idx, item ->
             TokenFeedItem(
                 modifier = Modifier,
                 onItemClicked = {
-
+                    dialogToken = it
+                    curSelectedIndex = idx
+                    showDialog = true
                 },
-                platformName = item.platformName,
-                userName = item.userName,
-                secret = item.secretKey,
+                onItemLongClicked = {
+                    CommonUtil.copyToClipboard(context, it)
+                    Toast.makeText(context, "复制token成功！", Toast.LENGTH_SHORT).show()
+                },
+                tokenMixed = item,
                 progress = currentProgress,
                 maxProgress = 30
             )

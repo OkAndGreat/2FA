@@ -5,6 +5,12 @@
       <entry key="BottomNavigationPreview">
         <State />
       </entry>
+      <entry key="EditTokenDialogPreview">
+        <State />
+      </entry>
+      <entry key="TokenFeedItemPreview">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>
