@@ -31,6 +31,7 @@ fun NavigationHost(
         composable(route = NavItem.SecureNavItem.route) {
             SecureScreen()
         }
+
     }
 }
 

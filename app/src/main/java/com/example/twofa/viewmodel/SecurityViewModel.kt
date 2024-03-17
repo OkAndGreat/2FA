@@ -20,10 +20,15 @@ class SecurityViewModel : ViewModel() {
 
     }
 
-    private val kv = MMKV.defaultMMKV()
+    private val kv by lazy {
+        MMKV.defaultMMKV()
+    }
 
     private var _screenshotSelectState = mutableStateOf(kv.decodeBool("screenshotSelectState"))
     val screenshotSelectState: State<Boolean> = _screenshotSelectState
+
+    private var _pincode = mutableStateOf("")
+    val pincode: State<String> = _pincode
 
     var showConfirmToggleDialog = mutableStateOf(false)
 
@@ -31,6 +36,10 @@ class SecurityViewModel : ViewModel() {
     fun toggleScreenshotSelectState() {
         _screenshotSelectState.value = _screenshotSelectState.value.not()
         kv.encode("screenshotSelectState", screenshotSelectState.value)
+    }
+
+    fun changePin(pin: String) {
+        _pincode.value = pin
     }
 
 
