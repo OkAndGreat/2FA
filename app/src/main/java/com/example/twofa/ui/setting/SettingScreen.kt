@@ -8,14 +8,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.twofa.R
+import com.example.twofa.viewmodel.GlobalViewModel
+import widget.NavItem
 
 @Composable
 fun SettingScreen() {
-    Column(modifier = Modifier.background(Color.White).fillMaxSize()) {
+    val globalViewModel: GlobalViewModel = viewModel(viewModelStoreOwner = LocalView.current.findViewTreeViewModelStoreOwner()!!)
+    val navController = globalViewModel.navController
+
+    Column(
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxSize()
+    ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "Setting",
@@ -27,7 +39,7 @@ fun SettingScreen() {
 
         Column() {
             SettingRow(modifier = Modifier, iconId = R.drawable.ic_security_48, desc = "安全中心") {
-
+                navController?.navigate(NavItem.SecureNavItem.route)
             }
             SettingRow(modifier = Modifier, iconId = R.drawable.ic_theme_48, desc = "行为与外观") {
 

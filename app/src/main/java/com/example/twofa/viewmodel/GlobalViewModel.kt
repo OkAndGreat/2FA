@@ -1,6 +1,7 @@
 package com.example.twofa.viewmodel
 
 import android.content.Context
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -19,5 +20,7 @@ class GlobalViewModel : ViewModel() {
     }
 
     var navController: NavController? = null
+
+    var localView: View? = null
 
 }

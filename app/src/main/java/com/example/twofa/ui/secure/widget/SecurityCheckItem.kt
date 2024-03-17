@@ -1,12 +1,10 @@
 package com.example.twofa.ui.secure.widget
 
 import android.text.TextUtils
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Switch
 import androidx.compose.material.SwitchDefaults
@@ -33,7 +31,7 @@ fun SecurityCheckItemWidget(
     mainText: String,
     extraText: String = "",
     isSelected: Boolean,
-    isDisabled: Boolean,
+    isEnabled: Boolean,
     onSwitched: (() -> Unit)
 ) {
     var isSwitched by remember(isSelected) {
@@ -45,7 +43,7 @@ fun SecurityCheckItemWidget(
         uncheckedTrackColor = Color.LightGray,
         checkedThumbColor = Color.White,
         checkedTrackColor = Color.Red,
-        disabledUncheckedTrackColor = Color(255, 253, 253, 253),
+        disabledUncheckedTrackColor = Color(225, 225, 225, 255),
         disabledUncheckedThumbColor = Color(225, 225, 225, 255),
         disabledCheckedThumbColor = Color.White,
         disabledCheckedTrackColor = Color.Red
@@ -74,10 +72,12 @@ fun SecurityCheckItemWidget(
 
         Switch(
             checked = isSwitched,
-            onCheckedChange = { isSwitched = it },
+            onCheckedChange = {
+                onSwitched.invoke()
+            },
             colors = switchColors,
             modifier = Modifier.padding(end = 22.dp),
-            enabled = isDisabled
+            enabled = isEnabled
         )
 
     }
@@ -92,6 +92,6 @@ fun SecurityCheckItemWidgetPreview() {
         mainText = "PIN code",
         extraText = "",
         isSelected = true,
-        isDisabled = false,
+        isEnabled = false,
         onSwitched = {})
 }

@@ -2,8 +2,12 @@ package com.example.twofa.viewmodel
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.tencent.mmkv.MMKV
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 
 class SecurityViewModel : ViewModel() {
     companion object {
@@ -15,4 +19,19 @@ class SecurityViewModel : ViewModel() {
         }
 
     }
+
+    private val kv = MMKV.defaultMMKV()
+
+    private var _screenshotSelectState = mutableStateOf(kv.decodeBool("screenshotSelectState"))
+    val screenshotSelectState: State<Boolean> = _screenshotSelectState
+
+    var showConfirmToggleDialog = mutableStateOf(false)
+
+
+    fun toggleScreenshotSelectState() {
+        _screenshotSelectState.value = _screenshotSelectState.value.not()
+        kv.encode("screenshotSelectState", screenshotSelectState.value)
+    }
+
+
 }
