@@ -8,4 +8,6 @@ object Constant {
     val COMMON_GRAY = Color(158,158,158)
 
     const val REQUEST_CODE_SCAN = 0x01
+
+    const val KEY_CONFIRM_PIN = "key_confirm_pin"
 }

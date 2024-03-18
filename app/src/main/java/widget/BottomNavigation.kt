@@ -1,14 +1,11 @@
 package widget
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -140,12 +137,14 @@ fun BottomNavigationPreview() {
 val navItemList = listOf(NavItem.TokenNavItem, NavItem.SettingNavItem)
 
 sealed class NavItem(val route: String = "") {
-    object TokenNavItem : NavItem("token")
+    data object TokenNavItem : NavItem("token")
 
-    object SettingNavItem : NavItem("setting")
+    data object SettingNavItem : NavItem("setting")
 
-    object SecureNavItem : NavItem("secure")
+    data object SecureNavItem : NavItem("secure")
 
-    object PinNavItem : NavItem("pin")
+    data object SetPinNavItem : NavItem("set_pin")
+
+    data object ConfirmPinNavItem : NavItem("confirm_pin")
 
 }

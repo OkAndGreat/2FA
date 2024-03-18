@@ -6,7 +6,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.twofa.ui.secure.ConfirmPincodeScreen
 import com.example.twofa.ui.secure.SecureScreen
+import com.example.twofa.ui.secure.SetPinCodeScreen
 import com.example.twofa.ui.setting.SettingScreen
 import com.example.twofa.ui.token.TokenScreen
 import widget.NavItem
@@ -30,6 +32,12 @@ fun NavigationHost(
         }
         composable(route = NavItem.SecureNavItem.route) {
             SecureScreen()
+        }
+        composable(route = NavItem.SetPinNavItem.route) {
+            SetPinCodeScreen()
+        }
+        composable(route = NavItem.ConfirmPinNavItem.route) {
+            ConfirmPincodeScreen()
         }
 
     }

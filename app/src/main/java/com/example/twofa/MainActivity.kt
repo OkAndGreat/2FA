@@ -32,6 +32,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.twofa.ui.theme.TwoFATheme
 import com.example.twofa.utils.Constant
+import com.example.twofa.utils.EncryptUtil
+import com.example.twofa.utils.LogUtil
 import com.example.twofa.utils.StatusBarHeight
 import com.example.twofa.viewmodel.GlobalViewModel
 import com.example.twofa.viewmodel.SecurityViewModel
@@ -119,6 +121,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onStart() {
         super.onStart()
+
         val tokenViewModel = TokenViewModel.get(this)
         tokenViewModel?.getTokenListByDb()
         if (securityViewModel?.screenshotSelectState?.value == true) {
