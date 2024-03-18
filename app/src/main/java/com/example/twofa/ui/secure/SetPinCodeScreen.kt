@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +39,6 @@ import com.example.twofa.ui.secure.widget.PasswordAnimation
 import com.example.twofa.utils.clickableWithoutRipple
 import com.example.twofa.viewmodel.GlobalViewModel
 import com.example.twofa.viewmodel.SecurityViewModel
-import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import widget.NavigationHeader
@@ -56,13 +54,13 @@ fun SetPinCodeScreen() {
 
 
     val pincode by secureViewModel.pincode
-    var pinState by remember {
-        mutableStateOf(PinState(PINStage.STAGE_FIRST, "", ""))
+    var setPinState by remember {
+        mutableStateOf(SetPinState(SetPINStage.STAGE_FIRST, "", ""))
     }
 
     BackHandler(enabled = true) {
         navController?.popBackStack()
-        pinState = PinState(PINStage.STAGE_FIRST, "", "")
+        setPinState = SetPinState(SetPINStage.STAGE_FIRST, "", "")
     }
 
     Column(
@@ -72,34 +70,35 @@ fun SetPinCodeScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         NavigationHeader(info = "创建 PIN", modifier = Modifier.padding(start = 6.dp)) {
-            pinState = PinState(PINStage.STAGE_FIRST, "", "")
+            setPinState = SetPinState(SetPINStage.STAGE_FIRST, "", "")
             navController?.popBackStack()
         }
 
         PasswordAnimation(
-            showConfirm = pinState.stage == PINStage.STAGE_CONFIRM,
+            showConfirm = setPinState.stage == SetPINStage.STAGE_CONFIRM,
             modifier = Modifier.padding(top = 100.dp)
         )
 
 
         Box {
+            val fillCount = if (setPinState.stage == SetPINStage.STAGE_FIRST) setPinState.firstPincode.length
+            else setPinState.confirmPincode.length
             FourDotWidget(
-                fillCount = if (pinState.stage == PINStage.STAGE_FIRST) pinState.firstPincode.length
-                else pinState.confirmPincode.length,
+                fillCount = fillCount,
                 modifier = Modifier
                     .padding(top = 28.dp)
                     .align(Alignment.Center)
             )
             Icon(painter = painterResource(id = R.drawable.ic_clear_soon),
                 contentDescription = "",
-                tint = if (pincode.isEmpty()) Color.LightGray else Color.Black,
+                tint = if (fillCount == 0) Color.LightGray else Color.Black,
                 modifier = Modifier
                     .padding(top = 28.dp, end = 66.dp)
                     .clickableWithoutRipple {
-                        if (pinState.stage == PINStage.STAGE_FIRST) {
-                            pinState = pinState.copy(firstPincode = "")
-                        } else if (pinState.stage == PINStage.STAGE_CONFIRM) {
-                            pinState = pinState.copy(confirmPincode = "")
+                        if (setPinState.stage == SetPINStage.STAGE_FIRST) {
+                            setPinState = setPinState.copy(firstPincode = "")
+                        } else if (setPinState.stage == SetPINStage.STAGE_CONFIRM) {
+                            setPinState = setPinState.copy(confirmPincode = "")
                         }
                     }
                     .size(18.dp)
@@ -109,16 +108,16 @@ fun SetPinCodeScreen() {
         Divider(modifier = Modifier.padding(top = 24.dp, start = 36.dp, end = 36.dp))
 
         DigitPanelWidget(digitSize = 24.sp, modifier = Modifier.padding(top = 24.dp)) {
-            if (pinState.stage == PINStage.STAGE_FIRST) {
-                pinState = pinState.copy(firstPincode = (pinState.firstPincode + it.toString()))
-                if (pinState.firstPincode.length == 4) {
-                    pinState = pinState.copy(stage = PINStage.STAGE_CONFIRM)
+            if (setPinState.stage == SetPINStage.STAGE_FIRST) {
+                setPinState = setPinState.copy(firstPincode = (setPinState.firstPincode + it.toString()))
+                if (setPinState.firstPincode.length == 4) {
+                    setPinState = setPinState.copy(stage = SetPINStage.STAGE_CONFIRM)
                 }
-            } else if (pinState.stage == PINStage.STAGE_CONFIRM) {
-                pinState = pinState.copy(confirmPincode = pinState.confirmPincode + it.toString())
-                if (pinState.confirmPincode.length == 4) {
-                    if (TextUtils.equals(pinState.firstPincode, pinState.confirmPincode)) {
-                        secureViewModel.changePin(pinState.firstPincode)
+            } else if (setPinState.stage == SetPINStage.STAGE_CONFIRM) {
+                setPinState = setPinState.copy(confirmPincode = setPinState.confirmPincode + it.toString())
+                if (setPinState.confirmPincode.length == 4) {
+                    if (TextUtils.equals(setPinState.firstPincode, setPinState.confirmPincode)) {
+                        secureViewModel.changePin(setPinState.firstPincode)
                         secureViewModel.togglePincodeSelectState()
                         coroutineScope.launch {
                             Toast.makeText(context, "设置成功！", Toast.LENGTH_SHORT)
@@ -129,7 +128,7 @@ fun SetPinCodeScreen() {
                     } else {
                         Toast.makeText(context, "俩次密码输入不相同，请再次输入", Toast.LENGTH_SHORT)
                             .show()
-                        pinState = PinState(PINStage.STAGE_FIRST, "", "")
+                        setPinState = SetPinState(SetPINStage.STAGE_FIRST, "", "")
                     }
                 }
             }
@@ -206,9 +205,9 @@ fun FourDotWidget(modifier: Modifier = Modifier, fillCount: Int) {
     }
 }
 
-data class PinState(var stage: PINStage, var firstPincode: String, var confirmPincode: String)
+data class SetPinState(var stage: SetPINStage, var firstPincode: String, var confirmPincode: String)
 
-enum class PINStage {
+enum class SetPINStage {
     STAGE_FIRST, STAGE_CONFIRM
 }
 

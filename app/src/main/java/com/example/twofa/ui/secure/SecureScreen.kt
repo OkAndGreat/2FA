@@ -87,6 +87,7 @@ fun SecureScreen() {
         NavigationHeader(info = "安全设置", modifier = Modifier.padding(start = 6.dp)) {
             navController?.navigate(NavItem.SettingNavItem.route)
         }
+
         SecurityCheckItemWidget(
             painterRes = R.drawable.ic_pincode,
             mainText = "PIN code",
@@ -100,6 +101,15 @@ fun SecureScreen() {
                 navController?.navigate(NavItem.SetPinNavItem.route)
             }
         }
+        SecurityCheckItemWidget(
+            painterRes = R.drawable.ic_passwordchange,
+            mainText = "更改 PIN code",
+            useSwitch = false,
+            onItemClicked = {
+                navController?.navigate(NavItem.ChangePinNavItem.route)
+            }
+        )
+
         Divider()
         SecurityCheckItemWidget(
             painterRes = R.drawable.ic_biometrics,

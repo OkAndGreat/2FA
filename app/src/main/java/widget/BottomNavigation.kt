@@ -147,4 +147,6 @@ sealed class NavItem(val route: String = "") {
 
     data object ConfirmPinNavItem : NavItem("confirm_pin")
 
+    data object ChangePinNavItem : NavItem("change_pin")
+
 }

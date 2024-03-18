@@ -137,6 +137,13 @@ class MainActivity : FragmentActivity() {
         registerScreenCaptureCallback(mainExecutor, screenCaptureCallback)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (securityViewModel?.pincodeSelectState?.value == true) {
+            globalViewModel?.navController?.navigate(NavItem.ConfirmPinNavItem.route)
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onStop() {
         super.onStop()

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.twofa.R
 import com.example.twofa.utils.Constant
+import com.example.twofa.utils.clickableWithoutRipple
 
 @Composable
 fun SecurityCheckItemWidget(
@@ -30,9 +31,11 @@ fun SecurityCheckItemWidget(
     painterRes: Int,
     mainText: String,
     extraText: String = "",
-    isSelected: Boolean,
-    isEnabled: Boolean,
-    onSwitched: (() -> Unit)
+    isSelected: Boolean = false,
+    isEnabled: Boolean = true,
+    useSwitch: Boolean = true,
+    onItemClicked: (() -> Unit) = {},
+    onSwitched: (() -> Unit) = {}
 ) {
     var isSwitched by remember(isSelected) {
         mutableStateOf(isSelected)
@@ -50,7 +53,11 @@ fun SecurityCheckItemWidget(
     )
 
     Row(
-        modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
+        modifier = Modifier
+            .padding(horizontal = 10.dp, vertical = 10.dp)
+            .clickableWithoutRipple {
+                onItemClicked.invoke()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -70,16 +77,17 @@ fun SecurityCheckItemWidget(
             }
         }
 
-        Switch(
-            checked = isSwitched,
-            onCheckedChange = {
-                onSwitched.invoke()
-            },
-            colors = switchColors,
-            modifier = Modifier.padding(end = 22.dp),
-            enabled = isEnabled
-        )
-
+        if (useSwitch) {
+            Switch(
+                checked = isSwitched,
+                onCheckedChange = {
+                    onSwitched.invoke()
+                },
+                colors = switchColors,
+                modifier = Modifier.padding(end = 22.dp),
+                enabled = isEnabled
+            )
+        }
     }
 
 }
