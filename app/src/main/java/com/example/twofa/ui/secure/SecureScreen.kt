@@ -2,6 +2,8 @@ package com.example.twofa.ui.secure
 
 import android.app.Activity
 import android.view.WindowManager
+import android.widget.Toast
+import androidx.biometric.BiometricManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.twofa.R
 import com.example.twofa.ui.secure.widget.ConfirmToggleDialog
 import com.example.twofa.ui.secure.widget.SecurityCheckItemWidget
+import com.example.twofa.utils.BiometricUtil
 import com.example.twofa.utils.Constant
 import com.example.twofa.viewmodel.GlobalViewModel
 import com.example.twofa.viewmodel.SecurityViewModel
@@ -36,6 +39,7 @@ fun SecureScreen() {
     val navController = globalViewModel.navController
     val kv = MMKV.defaultMMKV()
     val context = LocalContext.current
+    val biometricManager = BiometricManager.from(context)
     // 使用当前BackStackEntryAsState监听返回数据
     val currentBackStackEntry = navController?.currentBackStackEntryAsState()
     val savedStateHandle = currentBackStackEntry?.value?.savedStateHandle
@@ -105,7 +109,17 @@ fun SecureScreen() {
             extraText = "指纹锁是相比较Pin码更严格的安全模式，因此需要在Pin码启用时才可以使用 " +
                     "\n当开启指纹锁验证时，允许使用指纹锁验证Pin码验证的场景"
         ) {
+            if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
+                == BiometricManager.BIOMETRIC_SUCCESS
+            ) {
+                BiometricUtil.verifyBiometric(context, onVerifySuccess = {
+                    secureViewModel.toggleBiometricsSelectState()
+                }, onVerifyFailed = {
 
+                })
+            } else {
+                Toast.makeText(context, "当前设备不支持指纹验证", Toast.LENGTH_SHORT).show()
+            }
         }
         Divider()
         SecurityCheckItemWidget(

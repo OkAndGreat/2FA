@@ -8,12 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.tencent.mmkv.MMKV
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.fragment.app.FragmentActivity
 import com.example.twofa.utils.EncryptUtil
 
 class SecurityViewModel : ViewModel() {
     companion object {
         fun get(context: Context): SecurityViewModel? {
-            (context as? ComponentActivity)?.apply {
+            (context as? FragmentActivity)?.apply {
                 return ViewModelProvider(this).get(SecurityViewModel::class.java)
             }
             return null
@@ -36,7 +37,9 @@ class SecurityViewModel : ViewModel() {
         mutableStateOf(kv.decodeBool("biometricsSelectState", true))
     val biometricsSelectState: State<Boolean> = _biometricsSelectState
 
-    private var _pincode = mutableStateOf(EncryptUtil.getDecryptedData("pincode")!!)
+    private val _pincode by lazy {
+        mutableStateOf(EncryptUtil.getDecryptedData("pincode") ?: "")
+    }
     val pincode: State<String> = _pincode
 
     var showConfirmToggleDialog = mutableStateOf(false)

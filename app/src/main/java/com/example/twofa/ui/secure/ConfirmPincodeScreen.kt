@@ -3,6 +3,7 @@ package com.example.twofa.ui.secure
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.biometric.BiometricManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.twofa.R
 import com.example.twofa.ui.secure.widget.DigitPanelWidget
 import com.example.twofa.ui.secure.widget.PasswordAnimation
+import com.example.twofa.utils.BiometricUtil
 import com.example.twofa.utils.Constant
 import com.example.twofa.utils.clickableWithoutRipple
 import com.example.twofa.viewmodel.GlobalViewModel
@@ -46,6 +48,7 @@ fun ConfirmPincodeScreen() {
     val secureViewModel = SecurityViewModel.get(LocalContext.current)!!
     val navController = globalViewModel.navController
     val context = LocalContext.current
+    val biometricManager = BiometricManager.from(context)
     val coroutineScope = rememberCoroutineScope()
     var confirmPinCode by remember {
         mutableStateOf("")
@@ -53,10 +56,38 @@ fun ConfirmPincodeScreen() {
 
     var isConfirmSuccess = false
 
+    val verifySuccess = {
+        isConfirmSuccess = true
+        coroutineScope.launch {
+            Toast.makeText(context, "验证成功！", Toast.LENGTH_SHORT).show()
+            delay(1000)
+            val previousBackStackEntry = navController?.previousBackStackEntry
+            previousBackStackEntry?.savedStateHandle?.set(
+                Constant.KEY_CONFIRM_PIN,
+                isConfirmSuccess
+            )
+            navController?.popBackStack()
+        }
+    }
+
     BackHandler(enabled = true) {
         val previousBackStackEntry = navController?.previousBackStackEntry
-        previousBackStackEntry?.savedStateHandle?.set(Constant.KEY_CONFIRM_PIN, isConfirmSuccess)
+        previousBackStackEntry?.savedStateHandle?.set(
+            Constant.KEY_CONFIRM_PIN,
+            isConfirmSuccess
+        )
         navController?.popBackStack()
+    }
+
+    if ((biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
+                == BiometricManager.BIOMETRIC_SUCCESS) && secureViewModel.biometricsSelectState.value
+    ) {
+        BiometricUtil.verifyBiometric(context = context, onVerifySuccess = {
+            verifySuccess.invoke()
+        }, onVerifyFailed = {
+            isConfirmSuccess = false
+            Toast.makeText(context, "验证失败！", Toast.LENGTH_SHORT).show()
+        })
     }
 
     Column(
@@ -107,26 +138,16 @@ fun ConfirmPincodeScreen() {
             confirmPinCode += it.toString()
             if (confirmPinCode.length == 4) {
                 if (TextUtils.equals(confirmPinCode, secureViewModel.pincode.value)) {
-                    isConfirmSuccess = true
-                    coroutineScope.launch {
-                        Toast.makeText(context, "验证成功！", Toast.LENGTH_SHORT).show()
-                        delay(1500)
-                        val previousBackStackEntry = navController?.previousBackStackEntry
-                        previousBackStackEntry?.savedStateHandle?.set(
-                            Constant.KEY_CONFIRM_PIN,
-                            isConfirmSuccess
-                        )
-                        navController?.popBackStack()
-                    }
-                } else {
-                    isConfirmSuccess = false
-                    Toast.makeText(context, "验证失败！", Toast.LENGTH_SHORT).show()
-                    confirmPinCode = ""
+                    verifySuccess.invoke()
                 }
-
+            } else {
+                isConfirmSuccess = false
+                Toast.makeText(context, "验证失败！", Toast.LENGTH_SHORT).show()
+                confirmPinCode = ""
             }
 
         }
-    }
 
+    }
 }
+

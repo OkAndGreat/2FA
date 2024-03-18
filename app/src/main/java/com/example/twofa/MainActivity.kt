@@ -28,9 +28,11 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.twofa.ui.theme.TwoFATheme
+import com.example.twofa.utils.BiometricUtil
 import com.example.twofa.utils.Constant
 import com.example.twofa.utils.EncryptUtil
 import com.example.twofa.utils.LogUtil
@@ -49,7 +51,7 @@ import widget.BottomNavigation
 import widget.NavItem
 import widget.navItemList
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     private val securityViewModel by lazy {
         SecurityViewModel.get(this)

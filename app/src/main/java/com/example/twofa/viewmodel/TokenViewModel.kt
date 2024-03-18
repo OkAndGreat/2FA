@@ -2,6 +2,7 @@ package com.example.twofa.viewmodel
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -19,7 +20,7 @@ class TokenViewModel : ViewModel() {
 
     companion object {
         fun get(context: Context): TokenViewModel? {
-            (context as? ComponentActivity)?.apply {
+            (context as? FragmentActivity)?.apply {
                 return ViewModelProvider(this).get(TokenViewModel::class.java)
             }
             return null
