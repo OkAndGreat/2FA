@@ -20,7 +20,8 @@ import widget.NavItem
 
 @Composable
 fun SettingScreen() {
-    val globalViewModel: GlobalViewModel = viewModel(viewModelStoreOwner = LocalView.current.findViewTreeViewModelStoreOwner()!!)
+    val globalViewModel: GlobalViewModel =
+        viewModel(viewModelStoreOwner = LocalView.current.findViewTreeViewModelStoreOwner()!!)
     val navController = globalViewModel.navController
 
     Column(
@@ -52,7 +53,7 @@ fun SettingScreen() {
 
             }
             SettingRow(modifier = Modifier, iconId = R.drawable.ic_trash_48, desc = "回收站") {
-
+                navController?.navigate(NavItem.TrashNavItem.route)
             }
 
         }

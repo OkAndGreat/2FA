@@ -139,11 +139,11 @@ fun ConfirmPincodeScreen() {
             if (confirmPinCode.length == 4) {
                 if (TextUtils.equals(confirmPinCode, secureViewModel.pincode.value)) {
                     verifySuccess.invoke()
+                } else {
+                    isConfirmSuccess = false
+                    Toast.makeText(context, "验证失败！", Toast.LENGTH_SHORT).show()
+                    confirmPinCode = ""
                 }
-            } else {
-                isConfirmSuccess = false
-                Toast.makeText(context, "验证失败！", Toast.LENGTH_SHORT).show()
-                confirmPinCode = ""
             }
 
         }

@@ -149,4 +149,6 @@ sealed class NavItem(val route: String = "") {
 
     data object ChangePinNavItem : NavItem("change_pin")
 
+    data object TrashNavItem : NavItem("trash")
+
 }

@@ -60,6 +60,8 @@ class MainActivity : FragmentActivity() {
         GlobalViewModel.get(this)
     }
 
+    private var fromScanActivity = false
+
     val screenCaptureCallback = ScreenCaptureCallback {
         // Add logic to take action in your app.
         if (securityViewModel?.screenshotSelectState?.value == false) {
@@ -139,9 +141,10 @@ class MainActivity : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (securityViewModel?.pincodeSelectState?.value == true) {
+        if (securityViewModel?.pincodeSelectState?.value == true && fromScanActivity.not()) {
             globalViewModel?.navController?.navigate(NavItem.ConfirmPinNavItem.route)
         }
+        fromScanActivity = false
     }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -160,6 +163,7 @@ class MainActivity : FragmentActivity() {
                     result?.let {
                         tokenViewModel?.emitQRCodeScanEvent(ParseQRCodeEvent(it))
                     }
+                    fromScanActivity = true
                 }
             }
         }

@@ -63,6 +63,22 @@ class TokenViewModel : ViewModel() {
         }
     }
 
+    fun addToken(token: Token) {
+        viewModelScope.launch {
+            val db = AppDatabase.getDatabase()
+            val tokenDao = db.tokenDao()
+            val newList = _tokenList.value.toMutableList().apply {
+                add(token)
+            }
+            // 更新MutableStateFlow的值
+            _tokenList.value = newList
+            withContext(Dispatchers.IO) {
+                tokenDao.insert(token)
+            }
+        }
+
+    }
+
     fun deleteToken(token: Token) {
         _tokenList.value = _tokenList.value.toMutableList().apply {
             this.remove(token)

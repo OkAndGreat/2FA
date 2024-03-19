@@ -126,7 +126,7 @@ fun ChangePincodeScreen() {
                 }
 
                 ChangePINStage.STAGE_FIRST -> {
-                    pinState = pinState.copy(verifyPincode = pinState.firstPincode + it.toString())
+                    pinState = pinState.copy(firstPincode = pinState.firstPincode + it.toString())
                     if (pinState.firstPincode.length == 4) {
                         pinState = pinState.copy(stage = ChangePINStage.STAGE_CONFIRM)
                     }

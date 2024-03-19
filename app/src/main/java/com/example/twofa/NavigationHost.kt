@@ -12,6 +12,7 @@ import com.example.twofa.ui.secure.SecureScreen
 import com.example.twofa.ui.secure.SetPinCodeScreen
 import com.example.twofa.ui.setting.SettingScreen
 import com.example.twofa.ui.token.TokenScreen
+import com.example.twofa.ui.trash.TrashScreen
 import widget.NavItem
 
 @Composable
@@ -42,6 +43,9 @@ fun NavigationHost(
         }
         composable(route = NavItem.ChangePinNavItem.route) {
             ChangePincodeScreen()
+        }
+        composable(route = NavItem.TrashNavItem.route) {
+            TrashScreen()
         }
 
     }

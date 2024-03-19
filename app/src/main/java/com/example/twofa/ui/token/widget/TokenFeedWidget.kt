@@ -18,6 +18,7 @@ import com.example.twofa.db.emptyToken
 import com.example.twofa.ui.token.EditTokenDialog
 import com.example.twofa.utils.CommonUtil
 import com.example.twofa.viewmodel.TokenViewModel
+import com.example.twofa.viewmodel.TrashViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -39,6 +40,7 @@ fun TokenFeedWidget(modifier: Modifier = Modifier, tokenFeedList: List<Token>) {
     val listState = rememberLazyListState()
     val context = LocalContext.current
     val tokenViewModel = TokenViewModel.get(context)
+    val trashViewModel = TrashViewModel.get(context)
 
     LaunchedEffect(Unit) {
 
@@ -70,6 +72,7 @@ fun TokenFeedWidget(modifier: Modifier = Modifier, tokenFeedList: List<Token>) {
             onDeleteClicked = {
                 showDialog = showDialog.not()
                 tokenViewModel?.deleteToken(token = it)
+                trashViewModel?.addToken(it)
             },
             token = dialogToken,
             index = curSelectedIndex
