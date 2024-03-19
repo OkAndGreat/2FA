@@ -77,6 +77,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("com.airbnb.android:lottie:6.4.0")
     implementation("com.airbnb.android:lottie-compose:6.1.0")
+    implementation ("com.google.code.gson:gson:2.8.6")
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 

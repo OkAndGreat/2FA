@@ -43,14 +43,14 @@ fun SettingScreen() {
                 navController?.navigate(NavItem.SecureNavItem.route)
             }
             SettingRow(modifier = Modifier, iconId = R.drawable.ic_theme_48, desc = "行为与外观") {
-
+                navController?.navigate(NavItem.ApperanceNavItem.route)
             }
             SettingRow(
                 modifier = Modifier,
                 iconId = R.drawable.ic_import_outport,
                 desc = "导入与导出"
             ) {
-
+                navController?.navigate(NavItem.IOportNavItem.route)
             }
             SettingRow(modifier = Modifier, iconId = R.drawable.ic_trash_48, desc = "回收站") {
                 navController?.navigate(NavItem.TrashNavItem.route)
