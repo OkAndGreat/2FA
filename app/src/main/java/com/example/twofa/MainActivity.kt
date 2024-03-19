@@ -170,7 +170,6 @@ class MainActivity : FragmentActivity() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainApp() {
     val globalViewModel: GlobalViewModel? = GlobalViewModel.get(LocalContext.current)

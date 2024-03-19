@@ -6,6 +6,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.twofa.ui.apperance.ApperanceScreen
+import com.example.twofa.ui.ioport.IOportScreen
 import com.example.twofa.ui.secure.ChangePincodeScreen
 import com.example.twofa.ui.secure.ConfirmPincodeScreen
 import com.example.twofa.ui.secure.SecureScreen
@@ -46,6 +48,12 @@ fun NavigationHost(
         }
         composable(route = NavItem.TrashNavItem.route) {
             TrashScreen()
+        }
+        composable(route = NavItem.ApperanceNavItem.route) {
+            ApperanceScreen()
+        }
+        composable(route = NavItem.IOportNavItem.route) {
+            IOportScreen()
         }
 
     }

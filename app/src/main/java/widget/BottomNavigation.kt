@@ -151,4 +151,8 @@ sealed class NavItem(val route: String = "") {
 
     data object TrashNavItem : NavItem("trash")
 
+    data object ApperanceNavItem : NavItem("apperance")
+
+    data object IOportNavItem : NavItem("IOport")
+
 }
