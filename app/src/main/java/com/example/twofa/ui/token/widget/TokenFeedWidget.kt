@@ -17,6 +17,7 @@ import com.example.twofa.db.Token
 import com.example.twofa.db.emptyToken
 import com.example.twofa.ui.token.EditTokenDialog
 import com.example.twofa.utils.CommonUtil
+import com.example.twofa.viewmodel.AppearanceViewModel
 import com.example.twofa.viewmodel.TokenViewModel
 import com.example.twofa.viewmodel.TrashViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -41,6 +42,7 @@ fun TokenFeedWidget(modifier: Modifier = Modifier, tokenFeedList: List<Token>) {
     val context = LocalContext.current
     val tokenViewModel = TokenViewModel.get(context)
     val trashViewModel = TrashViewModel.get(context)
+    val appearanceViewModel = AppearanceViewModel.get(context)!!
 
     LaunchedEffect(Unit) {
 
@@ -60,6 +62,11 @@ fun TokenFeedWidget(modifier: Modifier = Modifier, tokenFeedList: List<Token>) {
             currentProgress = (timeSinceStartTime % timeStep).toInt()
         }
     }
+    val showNextTokenSelectState by appearanceViewModel.showNextTokenSelectState
+    val hideTokenSelectState = remember {
+        mutableStateOf(appearanceViewModel.hideTokenSelectState.value)
+    }
+
 
     if (showDialog) {
         EditTokenDialog(
@@ -94,7 +101,8 @@ fun TokenFeedWidget(modifier: Modifier = Modifier, tokenFeedList: List<Token>) {
                 },
                 tokenMixed = item,
                 progress = currentProgress,
-                maxProgress = 30
+                maxProgress = 30,
+                hideToken = hideTokenSelectState
             )
         }
     }

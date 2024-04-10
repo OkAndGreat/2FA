@@ -44,7 +44,7 @@ fun IOportScreen() {
         SettingRow(
             modifier = Modifier,
             iconId = R.drawable.ic_outport,
-            desc = "导入"
+            desc = "导出"
         ) {
 
         }

@@ -22,7 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.twofa.R
 import com.example.twofa.ui.secure.widget.ConfirmToggleDialog
-import com.example.twofa.ui.secure.widget.SecurityCheckItemWidget
+import com.example.twofa.ui.secure.widget.CommonCheckItemWidget
 import com.example.twofa.utils.BiometricUtil
 import com.example.twofa.utils.Constant
 import com.example.twofa.viewmodel.GlobalViewModel
@@ -88,7 +88,7 @@ fun SecureScreen() {
             navController?.navigate(NavItem.SettingNavItem.route)
         }
 
-        SecurityCheckItemWidget(
+        CommonCheckItemWidget(
             painterRes = R.drawable.ic_pincode,
             mainText = "PIN code",
             isSelected = pincodeSelectState,
@@ -101,7 +101,7 @@ fun SecureScreen() {
                 navController?.navigate(NavItem.SetPinNavItem.route)
             }
         }
-        SecurityCheckItemWidget(
+        CommonCheckItemWidget(
             painterRes = R.drawable.ic_passwordchange,
             mainText = "更改 PIN code",
             useSwitch = false,
@@ -111,7 +111,7 @@ fun SecureScreen() {
         )
 
         Divider()
-        SecurityCheckItemWidget(
+        CommonCheckItemWidget(
             painterRes = R.drawable.ic_biometrics,
             mainText = "指纹锁",
             isSelected = false,
@@ -132,7 +132,7 @@ fun SecureScreen() {
             }
         }
         Divider()
-        SecurityCheckItemWidget(
+        CommonCheckItemWidget(
             painterRes = R.drawable.ic_screenshot,
             mainText = "允许截屏",
             extraText = "开启后将允许在应用内截图，该选项默认为关闭",

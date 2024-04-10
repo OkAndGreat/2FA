@@ -4,6 +4,7 @@ import android.text.TextUtils
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Switch
@@ -26,7 +27,7 @@ import com.example.twofa.utils.Constant
 import com.example.twofa.utils.clickableWithoutRipple
 
 @Composable
-fun SecurityCheckItemWidget(
+fun CommonCheckItemWidget(
     modifier: Modifier = Modifier,
     painterRes: Int,
     mainText: String,
@@ -53,7 +54,7 @@ fun SecurityCheckItemWidget(
     )
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 10.dp, vertical = 10.dp)
             .clickableWithoutRipple {
                 onItemClicked.invoke()
@@ -63,7 +64,7 @@ fun SecurityCheckItemWidget(
         Icon(
             painter = painterResource(id = painterRes),
             contentDescription = "",
-            tint = Constant.COMMON_RED_COLOR_DEEP, modifier = Modifier.padding(end = 18.dp)
+            tint = Constant.COMMON_RED_COLOR_DEEP, modifier = Modifier.padding(end = 18.dp).size(20.dp)
         )
 
         Column(
@@ -94,8 +95,8 @@ fun SecurityCheckItemWidget(
 
 @Composable
 @Preview
-fun SecurityCheckItemWidgetPreview() {
-    SecurityCheckItemWidget(
+fun CommonCheckItemWidgetPreview() {
+    CommonCheckItemWidget(
         painterRes = R.drawable.ic_pincode,
         mainText = "PIN code",
         extraText = "",
