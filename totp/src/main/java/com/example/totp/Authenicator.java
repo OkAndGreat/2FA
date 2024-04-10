@@ -17,6 +17,12 @@ public class Authenicator {
         return computePin(secret, otp_state);
     }
 
+    public static String getNextCode(String secret) throws OtpSourceException {
+        long otp_state = getValueAtTime(System.currentTimeMillis() / 1000 + 6);
+        return computePin(secret, otp_state);
+    }
+
+
     private static String computePin(String secret, long otp_state)
             throws OtpSourceException {
         if (secret == null || secret.length() == 0) {

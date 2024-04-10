@@ -13,4 +13,4 @@ data class Token(
     @ColumnInfo(name = "secret") val secretKey: String
 )
 
-val emptyToken = Token(0, "github", "wangzhongtai", "")
+val emptyToken = Token(0, "github", "wangzhongtai", "abcdefghijklmnopqrst")

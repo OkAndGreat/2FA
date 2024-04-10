@@ -1,5 +1,6 @@
 package com.example.twofa.ui.token.widget
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -41,7 +42,8 @@ fun TokenFeedItem(
     tokenMixed: Token,
     progress: Int,
     maxProgress: Int,
-    hideToken: MutableState<Boolean> = mutableStateOf(false)
+    hideToken: MutableState<Boolean> = mutableStateOf(false),
+    showNextToken: Boolean = false
 ) {
     LogUtil.d(progress.toString())
 
@@ -96,6 +98,22 @@ fun TokenFeedItem(
                 fontWeight = FontWeight.ExtraLight,
                 color = if (progress >= 25 && !hideToken.value) Constant.COMMON_RED_COLOR_DEEP else Color.Unspecified
             )
+            if (showNextToken) {
+                val nextToken = Authenicator.getNextCode(tokenMixed.secretKey)
+                AnimatedVisibility(visible = progress >= 25) {
+                    Text(
+                        text = if (hideToken.value) "*** ***" else nextToken.substring(
+                            0,
+                            3
+                        ) + " " + token.substring(3, 6),
+                        modifier = Modifier.padding(top = 3.dp),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraLight,
+                        color = if (progress >= 25 && !hideToken.value) Constant.COMMON_RED_COLOR_DEEP else Color.Unspecified
+                    )
+                }
+            }
+
         }
 
         if (hideToken.value) {

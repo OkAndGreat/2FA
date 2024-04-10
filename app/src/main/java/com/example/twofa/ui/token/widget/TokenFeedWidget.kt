@@ -102,7 +102,8 @@ fun TokenFeedWidget(modifier: Modifier = Modifier, tokenFeedList: List<Token>) {
                 tokenMixed = item,
                 progress = currentProgress,
                 maxProgress = 30,
-                hideToken = hideTokenSelectState
+                hideToken = hideTokenSelectState,
+                showNextToken = showNextTokenSelectState
             )
         }
     }
